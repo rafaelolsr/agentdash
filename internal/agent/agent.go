@@ -17,8 +17,8 @@ import (
 )
 
 // Activity is the live state of an agent session, classified from the tail of
-// its transcript. The fine-grained states mirror the vocabulary popularized by
-// lazyagent so that a glance at the list tells you what each agent is doing.
+// its transcript. The fine-grained states give the list a consistent vocabulary
+// so that a glance tells you what each agent is doing.
 type Activity string
 
 const (

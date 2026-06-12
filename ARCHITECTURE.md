@@ -10,32 +10,27 @@
 
 ## 1. Positioning & differentiator
 
-| | agent-deck / Claude Squad | lazyagent | **AgentDash** |
-| --- | --- | --- | --- |
-| Role | Launcher + orchestrator | Observer | **Observer** |
-| Spawns agents? | Yes (tmux panes) | No | **No** |
-| Primary data source | tmux + transcripts | agent transcripts | **agent transcripts ⨝ git worktrees** |
-| Headline answer | "agent is busy/waiting" | "agent is busy" | **"work done + mergeable + cross-agent collisions"** |
-| Storage | SQLite | files | flat JSON + config YAML |
+AgentDash is an **observer**, not a launcher: it never spawns agents (no tmux
+panes, no orchestration). You start your agents however you like; AgentDash reads
+their state and the git worktrees they work in.
 
-**The wedge:** AgentDash is a *correlation engine*. Two independent collectors —
-one watching each agent's own session files, one scanning git worktrees — are
-**joined on the filesystem path** (`agent.cwd` ↔ `worktree.path`). That join lets
-AgentDash display, per session, both the live agent activity **and** the concrete
-git outcome (diff stat, commits, ahead/behind, **mergeability**, and
-**cross-worktree file collisions** — a feature no incumbent has).
+**The core design:** AgentDash is a *correlation engine*. Two independent
+collectors — one watching each agent's own session files, one scanning git
+worktrees — are **joined on the filesystem path** (`agent.cwd` ↔ `worktree.path`).
+That join lets AgentDash display, per session, both the live agent activity
+**and** the concrete git outcome: diff stat, commits, ahead/behind,
+**mergeability**, and **cross-worktree file collisions** — two agents about to
+edit the same file are flagged before it becomes a merge conflict.
 
-**Prior art (credited, not copied):** UI inspiration from agent-deck (right-hand
-information deck), Claude Squad (left-hand session list), and lazyagent
-(observe-don't-launch behavior). AgentDash is an independent Go implementation;
-no code is taken from these projects.
+Storage is deliberately minimal: flat JSON files plus a config YAML, no daemon and
+no database.
 
 ---
 
 ## 2. Language & stack — **Go**
 
 - **TUI:** Bubble Tea (`charmbracelet/bubbletea`) + Bubbles (list/viewport/help) +
-  Lip Gloss (layout/style). Best-in-class for the lazygit aesthetic.
+  Lip Gloss (layout/style). Best-in-class for a polished terminal aesthetic.
 - **CLI:** Cobra.
 - **Config:** YAML (`~/.agentdash/config.yaml`).
 - **State:** flat JSON files (no daemon, no DB) per the MVP constraint.
@@ -131,7 +126,7 @@ type AgentAdapter interface {
 **Activity classification (per agent):** read only the *tail* of the transcript.
 `Working` = last event is an in-progress assistant/tool turn and mtime < ~10s;
 `Waiting` = last event awaits user input; `Idle` = alive but stale; `Unknown` =
-process-scan only. Glyphs mirror agent-deck's vocabulary: `● ◐ ○ ✕`.
+process-scan only. Status glyphs: `● ◐ ○ ✕`.
 
 ### 3.2 Worktree collector — agent-agnostic git truth
 
@@ -191,7 +186,7 @@ required — a session shows up purely from being observed.
 
 ---
 
-## 4. TUI layout (Claude Squad list + agent-deck deck + lazygit feel)
+## 4. TUI layout (session list + detail deck)
 
 ```
 ┌─ Sessions ───────────┐┌─ Detail ──────────────────────────────────┐
@@ -207,16 +202,16 @@ required — a session shows up purely from being observed.
 │                      ││ ⚠ collides with codex on internal/util.go  │
 │                      ││ last commit  a1b2c3d  "add token store"    │
 └──────────────────────┘└────────────────────────────────────────────┘
- q quit  r refresh  ↵ detail  d diff  s status  c conflicts  o open  g lazygit  ? help
+ q quit  r refresh  ↵ detail  d diff  s status  c conflicts  o open  ? help
 ```
 
 - **Left:** session list (Bubbles `list`), status glyph + agent + branch; collision
   badge inline. Sorted by activity then churn.
-- **Right top:** session detail deck (agent-deck style).
+- **Right top:** session detail deck.
 - **Right middle:** git status + diff stat + **churn sparkline** (rolling history).
 - **Right bottom:** collisions + commits/activity.
-- **Keys:** `q r ↵ d s c o g ?` — `c` = conflict/collision report (new), `o` = open
-  worktree in `$EDITOR`, `g` = launch `lazygit` scoped to the worktree.
+- **Keys:** `q r ↵ d s c o ?` — `c` = conflict/collision report (new), `o` = open
+  worktree in `$EDITOR`.
 
 ---
 

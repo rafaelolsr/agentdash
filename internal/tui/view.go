@@ -739,7 +739,7 @@ func (m model) renderEmptyState(width, bodyHeight int) string {
 }
 
 // renderHeader draws the full-width banner: brand, session count, filter, and
-// time window — lazyagent's purple title bar.
+// time window in a purple title bar.
 func (m model) renderHeader() string {
 	brandStyle := lipgloss.NewStyle().Bold(true).Foreground(lipgloss.Color("231")).Background(colAccent).Padding(0, 1)
 	metaStyle := lipgloss.NewStyle().Foreground(lipgloss.Color("231")).Background(lipgloss.Color("60")).Padding(0, 1)
@@ -1139,7 +1139,7 @@ func (m model) logsBody(width int) string {
 		}
 		return labelStyle.Render("No conversation events found in the transcript.")
 	}
-	// Restrained label-column style (lazyagent): a muted fixed-width speaker
+	// Restrained label-column style: a muted fixed-width speaker
 	// label, with the wrapped message text aligned in a hanging indent beside
 	// it. Calm, scannable; no colored bubbles.
 	const labelW = 8
@@ -1198,7 +1198,7 @@ func terminalBody(s session.Session) string {
 
 // --- helpers ---
 
-// kvLabelWidth aligns all detail values to one column, lazyagent-style.
+// kvLabelWidth aligns all detail values to one column.
 const kvLabelWidth = 11
 
 func kv(k, v string) string {
@@ -1206,7 +1206,7 @@ func kv(k, v string) string {
 }
 
 // section renders a section title followed by a faint full-width rule and a
-// blank line of breathing room, for a calm lazyagent-style detail panel.
+// blank line of breathing room, for a calm, readable detail panel.
 func section(title string, width int) string {
 	rule := width - 2
 	if rule < 0 {
@@ -1228,8 +1228,8 @@ func writeLines(b *strings.Builder, style lipgloss.Style, lines ...string) {
 	}
 }
 
-// activityColor maps each fine-grained state to a color, following lazyagent's
-// convention of a distinct hue per state so the list reads at a glance.
+// activityColor maps each fine-grained state to a color — a distinct hue per
+// state so the list reads at a glance.
 func activityColor(a agent.Activity) lipgloss.Color {
 	switch a {
 	case agent.ActivityThinking:

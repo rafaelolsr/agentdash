@@ -21,9 +21,9 @@ When you run several agents in parallel (each in its own git worktree), the thin
 that ruins your day is two agents editing the same file. AgentDash is built around
 that problem:
 
-- **Monitors all your agents** from one dashboard, observe-only (like lazyagent).
+- **Monitors all your agents** from one dashboard, observe-only.
 - **Correlates** each agent to its git worktree by matching the agent's working
-  directory to the worktree path — so you see live activity *and* concrete git
+  directory to the worktree path — so you see live activity _and_ concrete git
   output side by side.
 - **Cross-worktree collision detection** — flags when two agents have touched the
   same file, before you hit a merge conflict.
@@ -39,14 +39,14 @@ that problem:
 
 ## Supported agents
 
-| Agent | Session source | Status |
-| --- | --- | --- |
-| Claude Code | `~/.claude/projects/<slug>/<id>.jsonl` | ✅ verified |
-| GitHub Copilot CLI | `~/.copilot/session-state/<id>/` (`COPILOT_HOME`) | ✅ verified |
-| Codex CLI | `~/.codex/sessions/…` (`CODEX_HOME`) | ✅ verified |
-| opencode | `~/.local/share/opencode/…` (`OPENCODE_DATA_DIR`) | ⚠️ from source schema, not live-tested |
-| Kimi CLI | `~/.kimi-code/…` (`KIMI_CODE_HOME`) | ⚠️ tolerant parser, not live-tested |
-| any other | running process (name + working dir) | ✅ generic process-scan fallback |
+| Agent              | Session source                                    | Status                                 |
+| ------------------ | ------------------------------------------------- | -------------------------------------- |
+| Claude Code        | `~/.claude/projects/<slug>/<id>.jsonl`            | ✅ verified                            |
+| GitHub Copilot CLI | `~/.copilot/session-state/<id>/` (`COPILOT_HOME`) | ✅ verified                            |
+| Codex CLI          | `~/.codex/sessions/…` (`CODEX_HOME`)              | ✅ verified                            |
+| opencode           | `~/.local/share/opencode/…` (`OPENCODE_DATA_DIR`) | ⚠️ from source schema, not live-tested |
+| Kimi CLI           | `~/.kimi-code/…` (`KIMI_CODE_HOME`)               | ⚠️ tolerant parser, not live-tested    |
+| any other          | running process (name + working dir)              | ✅ generic process-scan fallback       |
 
 Adapters marked "not live-tested" were built from each tool's documented or
 source schema but could not be verified against a local install; their field
@@ -100,7 +100,7 @@ activity and git status — refreshing every 2 seconds.
 ### Activity states
 
 Each session is tagged with a color-coded activity state, inferred from the tail
-of its transcript (the same vocabulary lazyagent uses):
+of its transcript:
 
 `thinking` · `reading` · `writing` · `running` · `searching` · `browsing` ·
 `spawning` · `compacting` · `waiting` · `idle` · `exited`
@@ -111,21 +111,21 @@ both map to `writing`.
 
 ### Keybindings
 
-| Key | Action |
-| --- | --- |
-| `q` / `ctrl+c` | quit |
-| `r` | refresh now |
-| `↑`/`k`, `↓`/`j` | navigate sessions (or scroll, when detail focused) |
-| `tab` | switch focus between list and detail |
-| `f` | cycle activity filter (all → active → waiting → idle) |
-| `/` | search sessions by path / branch / agent |
-| `+` / `-` | widen / narrow the time window (±10 min) |
-| `l` | conversation / recent activity |
-| `d` | full git diff |
-| `s` | git status |
-| `c` | cross-worktree collisions |
-| `t` | terminal attach hint |
-| `?` | help |
+| Key              | Action                                                |
+| ---------------- | ----------------------------------------------------- |
+| `q` / `ctrl+c`   | quit                                                  |
+| `r`              | refresh now                                           |
+| `↑`/`k`, `↓`/`j` | navigate sessions (or scroll, when detail focused)    |
+| `tab`            | switch focus between list and detail                  |
+| `f`              | cycle activity filter (all → active → waiting → idle) |
+| `/`              | search sessions by path / branch / agent              |
+| `+` / `-`        | widen / narrow the time window (±10 min)              |
+| `l`              | conversation / recent activity                        |
+| `d`              | full git diff                                         |
+| `s`              | git status                                            |
+| `c`              | cross-worktree collisions                             |
+| `t`              | terminal attach hint                                  |
+| `?`              | help                                                  |
 
 Detail/diff/status/conversation overlays are scrollable with `↑`/`↓`.
 
@@ -134,14 +134,14 @@ Detail/diff/status/conversation overlays are scrollable with `↑`/`↓`.
 `~/.agentdash/config.yaml`:
 
 ```yaml
-repos:                     # repositories whose worktrees are scanned
-  - ~/code/my-project
-bases:                     # optional per-repo base branch for ahead/behind
-  /abs/path/to/repo: develop
-agents:                    # optional: restrict to specific adapters
-  - claude
-  - copilot
-refresh_seconds: 2         # TUI poll interval
+repos: # repositories whose worktrees are scanned
+     - ~/code/my-project
+bases: # optional per-repo base branch for ahead/behind
+     /abs/path/to/repo: develop
+agents: # optional: restrict to specific adapters
+     - claude
+     - copilot
+refresh_seconds: 2 # TUI poll interval
 ```
 
 You can relocate AgentDash's own data directory with `AGENTDASH_HOME`.
@@ -153,10 +153,10 @@ drop a JSON file in `~/.agentdash/sessions/`, keyed by worktree path:
 
 ```json
 {
-  "session_id": "my-feature",
-  "worktree_path": "/abs/path/to/worktree",
-  "task": "wire up oauth login flow",
-  "notes": "remember to run migrations"
+     "session_id": "my-feature",
+     "worktree_path": "/abs/path/to/worktree",
+     "task": "wire up oauth login flow",
+     "notes": "remember to run migrations"
 }
 ```
 
@@ -199,19 +199,6 @@ internal/correlate    cwd↔worktree join + collision detection
 internal/session      unified session model + optional JSON overlay
 internal/tui          Bubble Tea dashboard
 ```
-
-## Prior art & credit
-
-AgentDash is an independent implementation inspired by several excellent tools, and
-takes no code from them:
-
-- **[lazyagent](https://github.com/illegalstudio/lazyagent)** — the observe-don't-launch behavior.
-- **[Claude Squad](https://github.com/smtg-ai/claude-squad)** — the left-hand session list.
-- **[agent-deck](https://github.com/asheshgoplani/agent-deck)** — the right-hand information deck and status glyphs.
-- **[lazygit](https://github.com/jesseduffield/lazygit)** — the overall TUI feel.
-
-AgentDash's distinct angle is the **git-review correlation**: monitoring agents *and*
-their worktrees together, with cross-worktree collision detection.
 
 ## License
 

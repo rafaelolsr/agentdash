@@ -282,7 +282,7 @@ func headLines(path string, n int) ([]string, error) {
 
 // ComputeMetrics implements agent.Metricser. Codex rollouts record message
 // turns and tool/exec calls but do NOT include token counts, so tokens/cost
-// are left zero (shown as unavailable, like lazyagent does for such agents).
+// are left zero (shown as unavailable for such agents).
 func (a *Adapter) ComputeMetrics(sourceFile string) (agent.Metrics, error) {
 	f, err := os.Open(sourceFile)
 	if err != nil {
