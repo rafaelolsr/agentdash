@@ -9,22 +9,11 @@ or any agent however you like; AgentDash observes them and answers the question 
 launcher can't: **what work has each agent produced, and can it be merged without
 collisions?**
 
-```
-┌─ Sessions ───────────┐┌─ Detail ──────────────────────────────────┐
-│ ● claude   feat/auth ││ agent     claude   model  claude-opus-4-8  │
-│ ◐ copilot  fix/race  ││ repo      ~/code/app                       │
-│ ⚠ claude   feat/api  ││ worktree  ~/code/app-wt-api                │
-│   (collides)         ││ branch    feat/api  (→ main, +3/-0)        │
-│ ○ codex    docs      ││ task      "wire up oauth login flow"       │
-│                      │├─ Git ──────────────────────────────────────┤
-│                      ││ 12 files  +418 -57                         │
-│                      ││ internal/auth/oauth.go                     │
-│                      │├─ Activity ─────────────────────────────────┤
-│                      ││ ⚠ collides with feat/auth                  │
-│                      ││ last commit  a1b2c3d  add token store      │
-└──────────────────────┘└────────────────────────────────────────────┘
- q quit · r refresh · ↑/↓ navigate · ⚠ = file collision
-```
+![AgentDash Fleet view — live agent monitor with session detail, conversation, tools, and git output](docs/fleet-view.png)
+
+> **Fleet view** — every running agent on the left with live activity sparklines;
+> the selected session's detail, conversation preview, recent tools, and git diff
+> on the right. Cycle views with `v`, navigate with `↑/↓`, open full detail with `enter`.
 
 ## Why AgentDash
 
@@ -40,6 +29,13 @@ that problem:
   same file, before you hit a merge conflict.
 - **Agent-agnostic git truth** — a worktree with changes shows up whether or not an
   agent is currently attached.
+
+![AgentDash Board view — kanban grouping sessions by required supervisor action](docs/board-view.png)
+
+> **Board view** (`v` to switch) — a kanban that sorts every session into the one
+> thing you need to do next: **Needs Input**, **Working**, **⚠ Colliding**,
+> **Ready Merge**, or **Done / Idle**. The Colliding column surfaces exactly which
+> file two agents are both touching, before it becomes a merge conflict.
 
 ## Supported agents
 
