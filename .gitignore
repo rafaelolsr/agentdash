@@ -1,0 +1,14 @@
+# Compiled binary (built via `make build`; do not commit)
+/agentdash
+
+# Go build/test artifacts
+*.exe
+*.test
+*.out
+*.prof
+
+# OS / editor cruft
+.DS_Store
+*.swp
+.idea/
+.vscode/
